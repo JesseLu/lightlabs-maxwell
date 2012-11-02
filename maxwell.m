@@ -1,55 +1,18 @@
-% blah
-
 classdef maxwell
-% Maxwell -- Harnessing the cloud to understand light
-% 
-% Maxwell allows you to harness the power of Amazon's Elastic Compute Cloud 
-% (EC2) in order to solve electromagnetic simulations -- all without leaving
-% Matlab.
-%
-% This is Maxwell's master class which provides a simple, complete
-% Matlab toolset to run cloud-powered electromagnetic simulations.
-%
-% This class should be considered an advanced toolset as it gives full
-% control over the simulation process to the user. As such, a somewhat
-% extensive knowledge of computational electromagnetics may be required.
-% To use Maxwell from an interface which does most of the work for you,
-% please see either the dynamic grid or static grid interfaces using
-% help maxwell_dynamic_interface or help maxwell_static interface.
-%
-%%% Example usage
-%  % Sign in to Amazon Web Services (AWS) and launch a cluster.
-%  maxwell.aws_credentials('aws-access-key-id', 'aws-secret-access-key');
-%  maxwell.launch('cluster-name', 2); % Cluster contains 2 nodes.
-%
-%  % Run a simulation on 1 node of the cluster.
-%  % Additional parameters are described in maxwell.solve documentation.
-%  [E, H] = maxwell.solve('cluster-name', 1, ...); 
-%
-%  % Asynchronously start a simulation.
-%  finish_solve = maxwell.solve_async('cluster-name', 2, ...);
-%  while ~finish_solve() % Wait for simulation to finish.
-%  end
-%  [is_finished, E, H] = finish_solve(); % Retrieve solution fields.
-%
-%  % Terminate cluster.
-%  maxwell.terminate('cluster-name');
-
-%%% Methods
-% The Maxwell master class provides the following methods:
-% maxwell.aws_credentials % Sign in to AWS.
-% maxwell.launch % Launch a cluster.
-% maxwell.solve % Simulate.
-% maxwell.solve_async % Simulate asynchronously.
-% maxwell.termiante % Shut down a cluster.
-%
-% For documentation on the following methods use 'doc method-name' such as
-% 'doc maxwell.solve'.
+    % MAXWELL provides the following methods to perform electromagnetic 
+    % simulations on Amazon's Elastic Compute Cloud (EC2).
+    %
+    % MAXWELL Methods:
+    %    maxwell.aws_credentials - Description 
+    %    maxwell.launch - Description 
+    %    maxwell.solve - Description 
+    %    maxwell.solve_async - Description 
+    %    maxwell.terminate - Description 
 
     methods (Static)
 
 function aws_credentials(id, key)
-%% maxwell.aws_credentials
+% MAXWELL.AWS_CREDENTIALS
 % Store Amazon Web Services (AWS) security credentials needed to launch and
 % terminate Maxwell clusters.
 % To obtain your AWS credentials go to 
