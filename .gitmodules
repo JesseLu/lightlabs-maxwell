@@ -1,0 +1,3 @@
+[submodule "maxwell-dyn"]
+	path = maxwell-dyn
+	url = git://github.com/wsshin/maxwell-dyn.git

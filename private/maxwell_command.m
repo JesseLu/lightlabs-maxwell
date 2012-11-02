@@ -4,7 +4,7 @@
 function [status, response] = ...
    maxwell_command(aws_id, aws_key, command, cluster_name, num_nodes, verbosity)
 
-    url = 'https://maxwell.lightlabs.co:8000'; % Location of control server.
+    url = 'https://maxwell-server.lightlabs.co:8000'; % Location of control server.
 
     % Send the command and receive the response from the control server.
     [status, response] = my_urlread( ...

@@ -142,7 +142,7 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
     send_start = tic;
 
     % Create a urlConnection.
-    [urlConnection, errorid, errormsg] = maxwell_urlreadwrite(url, cert);
+    [urlConnection, errorid, errormsg] = my_urlreadwrite(url, cert);
     if isempty(urlConnection)
         error(['Could not connect to url: ', url]);
     end
@@ -248,9 +248,9 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
                     break
                 else % Received the next status update.
                     d = char(c);
-                    state = d(1:4);
+                    state = d(1:10);
                     data = d(5:end);
-                    if strcmp(state, 'EXEC') % Process EXEC status.
+                    if strcmp(state, 'Solving...') % Process EXEC status.
                         if ~isnan(str2double(strtok(data))) % Found a residual.
                             res_log(end+1) = str2double(strtok(data));
                         elseif ~isempty(strfind(data, 'success')) % Sim result.
@@ -318,14 +318,14 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
                     url = redirect_to{l};
 
                     % Create a new urlConnection.
-                    [urlConnection, errorid, errormsg] = maxwell_urlreadwrite(url, cert);
+                    [urlConnection, errorid, errormsg] = my_urlreadwrite(url, cert);
                     if isempty(urlConnection)
                         error(['Could not connect to url: ', url]);
                     end
 
                      % Open up http connections.
                     for k = 1 : N
-                        urlConnections{k} = maxwell_urlreadwrite(...
+                        urlConnections{k} = my_urlreadwrite(...
                             [url, '/.maxwell.', job_name, '.', endings{k}], cert);
                         if isempty(urlConnections{k})
                             error(['Could not connect to url: ', url]);
@@ -349,7 +349,7 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
                     end
                 end
                 
-                fprintf('Connected to %s\n', url); % Redirect location worked!
+                % fprintf('Connected to %s\n', url); % Redirect location worked!
                 break 
             end
 
