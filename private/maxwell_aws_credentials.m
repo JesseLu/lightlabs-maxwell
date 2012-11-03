@@ -18,7 +18,7 @@ function [varargout] = maxwell_aws_credentials(varargin)
         key = varargin{2};
 
         % Include the Maxwell java library as well.
-        javaaddpath('http://s3.amazonaws.com/lightlabs-maxwell/Maxwell.jar');
+        javaaddpath('http://s3.amazonaws.com/lightlabs-maxwell/Maxwell1.jar');
 
     elseif nargin == 0 % Return credentials.
         if isempty(id) || isempty(key)
