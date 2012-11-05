@@ -4,10 +4,14 @@
 
 version = 'pre-release';
 
-% Generic install script.
+%% Generic install script.
 fprintf('Loading Maxwell (%s)...', version);
-zipfile = [tempdir, filesep, 'maxwell.zip'];
+
+% Some constants.
+zipfile_prefix = [tempdir, filesep, 'maxwell-'];
 maxwelldir = [tempdir, filesep, 'lightlabs-maxwell'];
+
+% Get the zip files.
 urlwrite(['http://m.lightlabs.co/', version, '.zip'], zipfile);
 unzip(zipfile, maxwelldir);
 path(genpath(maxwelldir), path);
