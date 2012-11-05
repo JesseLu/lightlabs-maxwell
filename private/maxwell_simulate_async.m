@@ -249,7 +249,7 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
                 else % Received the next status update.
                     d = char(c);
                     state = d(1:10);
-                    data = d(5:end);
+                    data = d(11:end);
                     if strcmp(state, 'Solving...') % Process EXEC status.
                         if ~isnan(str2double(strtok(data))) % Found a residual.
                             res_log(end+1) = str2double(strtok(data));
