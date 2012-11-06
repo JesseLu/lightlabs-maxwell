@@ -3,25 +3,27 @@ classdef maxwell
 % simulations on Amazon's Elastic Compute Cloud (EC2).
 %
 % MAXWELL Methods:
-%    maxwell.aws_credentials - Description 
-%    maxwell.launch - Description 
-%    maxwell.solve - Description 
-%    maxwell.solve_async - Description 
-%    maxwell.terminate - Description 
+%    maxwell.aws_credentials - Store AWS Access credentials.
+%    maxwell.launch - Launch a Maxwell cluster. 
+%    maxwell.solve - Solve an electromagnetic simulation. 
+%    maxwell.solve_async - Asynchronous version of the maxwell.solve method.
+%    maxwell.terminate - Terminate a cluster.
 
     methods (Static)
 
 function aws_credentials(id, key)
 % MAXWELL.AWS_CREDENTIALS
 % Store Amazon Web Services (AWS) security credentials needed to launch and
-% terminate Maxwell clusters.
-% To obtain your AWS credentials go to 
-% https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials
-% or find the tutorial screencast at
-% http://www.iorad.com/?a=app.embed&remote=true&accessCode=GUEST&module=4897&mt=How-to-get-your-AWS-credentials
+% terminate Maxwell clusters. Must be run before any other maxwell commands.
+% 
+% Obtain your AWS credentials <a href="https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials">here</a>, or checkout the <a href="http://www.iorad.com/?a=app.embed&remote=true&accessCode=GUEST&module=4897&mt=How-to-get-your-AWS-credentials">tutorial</a>.
+%
+% Syntax:
+%   MAXWELL.AWS_CREDENTIALS('access-key-id', 'secret-access-key');
+%
+% Example:
+%   MAXWELL.AWS_CREDENTIALS('AKIAI53CHNXFFHNBUJFQ', '0Mi2d8MT9Uo2+P04VVmMVV8XdbOyv0UarS2rSaIz');
 
-%%% Syntax
-%  maxwell.aws_credentials('aws-access-key-id', 'aws-secret-access-key');
     maxwell_aws_credentials(id, key)
 end
 
@@ -72,10 +74,10 @@ end
 % TODO: Put a really good and easy example here!!!!!
 function [E, H, err, success] = solve(varargin)
     sim_finish = maxwell_simulate_async(varargin{:});
-	hf = figure;
-    while ~sim_finish(hf) % Wait for simulation to finish.
+	hf = gcf;
+    while ~sim_finish() % Wait for simulation to finish.
 	end
-    [is_finished, E, H, err, success] = sim_finish(hf);
+    [is_finished, E, H, err, success] = sim_finish();
 end
 
 %% maxwell.solve_async

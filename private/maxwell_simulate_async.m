@@ -233,7 +233,7 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
     % This function attempts to exit after INTERVAL seconds, but there is no
     % guarantee of this feature.
     function [is_finished, E_out, H_out, residuals, success] = ...
-                sim_callback(interval, figure_handle)
+                sim_callback(interval)
 
         start_time = tic; % Timer to evaluate when we should exit.
         d = ''; 
@@ -273,11 +273,11 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
         else
             plot_data = res_log;
 		end
-		set(0, 'CurrentFigure', figure_handle);
-		ha = gca;
+% 		set(0, 'CurrentFigure', figure_handle);
+% 		ha = gca;
         semilogy(plot_data, 'b-'); % Plot with a red 'x' at the most recent point.
-        hold(ha, 'on'); semilogy(length(plot_data), plot_data(end), 'rx'); hold(ha, 'off');
-%         hold on; semilogy(length(plot_data), plot_data(end), 'rx'); hold off;
+        % hold(ha, 'on'); semilogy(length(plot_data), plot_data(end), 'rx'); hold(ha, 'off');
+        hold on; semilogy(length(plot_data), plot_data(end), 'rx'); hold off;
         title(recent_line);
         ylabel('residual');
         xlabel('iterations');
@@ -390,7 +390,7 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
     end % End of inline function sim_callback().
     
     % Return the callback function to let the user complete the simulation.
-    sim_finish = @(hf) sim_callback(0.3, hf);
+    sim_finish = @() sim_callback(0.1);
     return
 end
 

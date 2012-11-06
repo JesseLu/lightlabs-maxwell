@@ -19,6 +19,16 @@
 %           The subscription will send $0.99/hr to lightlabs.co on top of 
 %           the usual AWS charges for each cluster you use.
 %       
+%   And that's it! Just a few words before we let you loose.
+%   
+%       We don't mess up your system -- i.e. you need to reload Maxwell every 
+%       time you start Matlab. Do this quickly using:
+%           <a href="matlab: fprintf('')">eval(urlread('http://m.lightlabs.co/pre-release'))</a>
+%       Note: Automate by adding it to your <a href="matlab:doc startup">startup.m</a> file.
+%
+%       <a href="matlab:showdemo maxwell">Read the docs!</a> Full documentation including Quick-start is there.
+%
+%       Need more help? Use our Q&A site: <a href="http://ask.lightlabs.co">ask.lightlabs.co</a>.
 
 fprintf('\n');
 help introduction_to_maxwell
