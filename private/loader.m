@@ -8,11 +8,18 @@ version = 'pre-release';
 fprintf('Loading Maxwell (%s)...', version);
 
 % Some constants.
-zipfile_prefix = [tempdir, filesep, 'maxwell-'];
 maxwelldir = [tempdir, filesep, 'lightlabs-maxwell'];
 
+% Make the directory.
+try 
+    warning off;
+    rmdir(maxwelldir, 's');
+    warning on;
+end
+mkdir(maxwelldir);
+
 % Get the zip files.
-urlwrite(['http://m.lightlabs.co/', version, '.zip'], zipfile);
-unzip(zipfile, maxwelldir);
+unzip(['http://nodeload.github.com/JesseLu/lightlabs-maxwell/zip/', version], maxwelldir);
+unzip(['http://nodeload.github.com/wsshin/maxwell-dyn/zip/', version], maxwelldir);
 path(genpath(maxwelldir), path);
 fprintf('done\n');

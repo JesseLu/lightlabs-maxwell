@@ -1,13 +1,13 @@
 classdef maxwell
-    % MAXWELL provides the following methods to perform electromagnetic 
-    % simulations on Amazon's Elastic Compute Cloud (EC2).
-    %
-    % MAXWELL Methods:
-    %    maxwell.aws_credentials - Description 
-    %    maxwell.launch - Description 
-    %    maxwell.solve - Description 
-    %    maxwell.solve_async - Description 
-    %    maxwell.terminate - Description 
+% MAXWELL provides the following methods to perform electromagnetic 
+% simulations on Amazon's Elastic Compute Cloud (EC2).
+%
+% MAXWELL Methods:
+%    maxwell.aws_credentials - Description 
+%    maxwell.launch - Description 
+%    maxwell.solve - Description 
+%    maxwell.solve_async - Description 
+%    maxwell.terminate - Description 
 
     methods (Static)
 
