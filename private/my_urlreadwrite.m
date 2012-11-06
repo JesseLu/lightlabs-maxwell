@@ -69,7 +69,7 @@ function [urlConnection, errorid, errormsg] = maxwell_urlreadwrite(urlChar, vara
     end
 
     % Set timeout.
-    urlConnection.setConnectTimeout(5e3); % 5-second window to establish connection.
+    urlConnection.setConnectTimeout(15e3); % 15-second window to establish connection.
     urlConnection.setReadTimeout(120e3); % 2-minute window to read from connection.
 end
 
