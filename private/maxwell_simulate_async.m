@@ -4,7 +4,7 @@
 function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
                             omega, d_prim, d_dual, s_prim, s_dual, ...
                             mu, epsilon, E, J, ...
-                            max_iters, err_thresh, view_progress)
+                            max_iters, err_thresh, view_progress, varargin)
 
     % Check to make sure num_nodes is valid.
     [dns, pwd, cert, max_nodes] = my_clusterlocate(cluster_name);
@@ -273,11 +273,19 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
         else
             plot_data = res_log;
 		end
-% 		set(0, 'CurrentFigure', figure_handle);
-% 		ha = gca;
+
+        % Figure out which figure to plot the error to.
+        if isempty(varargin)
+            figure_handle = gcf;
+        else
+            figure_handle = varargin{1};
+        end
+
+		set(0, 'CurrentFigure', figure_handle);
+		ha = gca;
         semilogy(plot_data, 'b-'); % Plot with a red 'x' at the most recent point.
-        % hold(ha, 'on'); semilogy(length(plot_data), plot_data(end), 'rx'); hold(ha, 'off');
-        hold on; semilogy(length(plot_data), plot_data(end), 'rx'); hold off;
+        hold(ha, 'on'); semilogy(length(plot_data), plot_data(end), 'rx'); hold(ha, 'off');
+        % hold on; semilogy(length(plot_data), plot_data(end), 'rx'); hold off;
         title(recent_line);
         ylabel('residual');
         xlabel('iterations');
