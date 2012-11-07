@@ -72,15 +72,47 @@ function [E, H, err, success] = solve(varargin)
 %
 % Syntax:
 %   [E, H, err, success] = MAXWELL.SOLVE('cluster-name', num_nodes, ...
-%                                         omega, ...
-%                                         d_prim, d_dual, s_prim, s_dual, ...
+%                                         omega, d_prim, d_dual, ...
 %                                         mu, epsilon, E, J, ...
 %                                         max_iters, err_thresh);
 %
+% Input Parameters:
+%   'cluster-name' -- string that must match the cluster name of a previously
+%       launched cluster
+%   num_nodes -- the number of nodes to be used for this simulation. Must be a
+%       number greater than 0 and less than the total number of nodes of the 
+%       cluster
+%       
+%   omega -- a complex scalar denoting the angular frequency of simulation.
+%   d_prim, d_dual -- length factors for the grid at the primary and dual 
+%       grid points, respectively. These parameters must be 3-element cell 
+%       arrays, where each element is a vector of length xx, yy, and zz,
+%       respectively. 
+%
+%   mu, epsilon, E, J -- permeability, permittivity, initial electric field, 
+%       and current sources.  These parameters must by 3-element cell arrays 
+%       where every element is itself a 3-dimensional array of size xx by yy 
+%       by zz. Each array corresponds to the x-, y-, or z-component of the 
+%       vector field, in that order.
+%       Note that the value of E usually only affects the convergence of the
+%       solver, and not the solution itself.
+%
+%   max_iters -- the maximum number of iterations to run the solver. If 
+%       convergence has not been obtained within max_iters iterations,
+%       then the solver exits with success = False. 
+%   err_thresh -- threshold error at which the solver terminates. Typically
+%       set to 1e-6.
+%
+% Output Parameters:
+%   E, H -- electric and magnetic solution fields. Both E and H are vector
+%           fields in the same format as the input parameters mu, epsilon, E,
+%           and J.
+%   err -- the convergence error at every iteration of the solve.
+%   success -- set to True if convergence was successful, False otherwise.
+
 % Example:
 %   Not yet available...
 
-    
     sim_finish = maxwell_simulate_async(varargin{:}, gcf);
     while ~sim_finish() % Wait for simulation to finish.
 	end
@@ -93,12 +125,35 @@ function [finish_solve] = solve_async(varargin)
 % Instead of waiting for the simulation to finish, this function ends after
 % the uploading process is complete. Simulation is monitored and completed
 % using the returned callback function.
+%
+% The asynchronous solve allows, among other things, for multiple simulations
+% to be run in parallel.
 % 
 % Syntax:
 %   finish_solve = maxwell.solve_async(<<same inputs as maxwell.solve>>);
+%   while ~finish_solve(); end
 %   [is_finished, E, H, err, success] = finish_solve();
 %
-% Mention plot functionality...
+% Input Parameters:
+%   Identical to those for maxwell.solve.
+%
+% Output Parameters:
+%   finish_solve -- a callback function which is used to complete the solve.
+%       finish_solve() returns a boolean variable called is_finished to signal
+%       simulation completion. This can be used to wait for the solve to
+%       complete by using the following command:
+%
+%           while ~finish_solve(); end
+%           
+%       which continuously calls finish_solve until is_finished is set to True.
+%
+%       The solution then be accessed via:
+%
+%           [is_finished, E, H, err, success] = finish_solve();
+%
+%       The output parameters (E, H, err, and success) are idential to those from 
+%       maxwell.solve().
+        
     finish_solve = maxwell_simulate_async(varargin{:});
 end
 

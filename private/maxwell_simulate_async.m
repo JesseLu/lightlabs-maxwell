@@ -2,7 +2,7 @@
 % Simulate!
  
 function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
-                            omega, d_prim, d_dual, s_prim, s_dual, ...
+                            omega, d_prim, d_dual, ...
                             mu, epsilon, E, J, ...
                             max_iters, err_thresh, view_progress, varargin)
 
@@ -50,17 +50,14 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
 
     % Check shapes of d_prim, d_dual, s_prim, and s_dual.
     % Specifically, each array of each must have length xx, yy, and zz respectively.
-    if any([numel(d_prim), numel(d_dual), numel(s_prim), numel(s_dual)] ~= 3)
+    if any([numel(d_prim), numel(d_dual)] ~= 3)
         error('D_PRIM, D_DUAL, S_PRIM, and S_DUAL must each have three cell elements.');
     end
     for k = 1 : 3
         d_prim{k} = d_prim{k}(:);
         d_dual{k} = d_dual{k}(:);
-        s_prim{k} = s_prim{k}(:);
-        s_dual{k} = s_dual{k}(:);
-        if (length(d_prim{k}) ~= shape(k)) || (length(d_dual{k}) ~= shape(k) || ...
-            length(s_prim{k}) ~= shape(k)) || (length(s_dual{k}) ~= shape(k))
-            error('The lengths of D_PRIM, D_DUAL, S_PRIM, and S_DUAL vectors must be xx, yy, and zz, in that order.')
+        if (length(d_prim{k}) ~= shape(k)) || (length(d_dual{k}) ~= shape(k))
+            error('The lengths of D_PRIM and D_DUAL vectors must be xx, yy, and zz, in that order.')
         end
     end
 
@@ -97,8 +94,6 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
     % Write d_prim, d_dual, s_prim, and s_dual to the input file.
     h5write_field(file, 'd_prim', d_prim);
     h5write_field(file, 'd_dual', d_dual);
-    h5write_field(file, 's_prim', s_prim);
-    h5write_field(file, 's_dual', s_dual);
 
     % Write mu, epsilon, E, and J to the input file.
     h5write_field(file, 'mu', mu);
