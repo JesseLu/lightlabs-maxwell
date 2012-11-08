@@ -17,6 +17,8 @@
 %
 % First, here's an overview of what a (short) Maxwell session might look like.
 
+eval(urlread('http://m.lightlabs.co/pre-release')) % Load Maxwell.
+
 % Get your Amazon Web Services (AWS) Credentials ready.
 maxwell.aws_credentials('access-key-id', 'secret-access-key'); 
 
@@ -31,7 +33,12 @@ maxwell.terminate('cluster1');
 
 %% Quick-start
 % Now that you have an idea of how Maxwell is used, why don't we guide you through an actual simulation on your Matlab session, so you can see how things look live?
-% 
+%
+% Just to make sure we're on the same page, you probably already have Maxwell loaded, but if you doubtful, running the following never hurts:
+
+eval(urlread('http://m.lightlabs.co/pre-release')) % One-command load.
+
+%% 
 % First off, you'll need your AWS Access Credentials, which you can obtain at <https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials>. In particular, you're looking for an active _Access Key ID_ and it's corresponding _Secret Access Key_. Of course, if you don't have an AWS account you'll need to sign up for one first.
 % 
 % Once you have your eye on your AWS credentials, then you'll want to copy-and-paste them into Maxwell's |aws_credentials| function like so:
@@ -66,7 +73,57 @@ maxwell.launch('cluster1', 2); % Yes, that's it. Really.
 % So, without further ado, let's solve an electromagnetic simulation!
 
 params = example_simulation_parameters([60 60 60]); % Let's start small (60x60x60 cells).
-maxwell.solve('cluster1', 1, params{:}); % Go baby, go!
+[E, H] = maxwell.solve('cluster1', 1, params{:}); % Go baby, go! Notice that we only use 1 node.
+
+%% 
+% You should get a plot similar to the one below.
+%
+% <<60x60x60.png>>
+%
+% And upon inspecting the solution using
+
+imagesc(real(E{3}(:,:,30)')); axis equal tight;
+
+%%
+% you should obtain the (near-field) radiation pattern of a dipole.
+
+%% 
+% Now that you're getting the hang of simulating, why not try something bigger?
+
+params = example_simulation_parameters([220 220 220]); % Over 10M cells.
+[E, H] = maxwell.solve('cluster1', 1, params{:}); % Solve using 1 node.
+[E, H] = maxwell.solve('cluster1', 2, params{:}); % Now solve using 2 nodes (faster!).
+
+%%
+% So what's going on now? Well, besides simulating a larger space, we're comparing using either 1 or 2 nodes of the cluster (which has a total of 2 nodes) to solve the simulation. Naturally, the simulation which uses 2 nodes should run faster, although not nearly twice as fast (there is some communication cost which cannot be hidden).
+%
+% At this point, you may be wondering why anyone would _not_ use all the worker nodes available for each simulation. Great question! To answer it, let me introduce you to Maxwell's asynchronous solve capabilities.
+%
+% Take a look at this next example, which utilizes our 2-node cluster to simulate 2 simulations in parallel (1 node each):
+
+params = example_simulation_parameters([220 220 220]);  
+sim1 = maxwell.solve_async('cluster1', 1, params{:}); % Send a simulation to cluster1,
+sim2 = maxwell.solve_async('cluster1', 1, params{:}); % and immediately send another, before the first even completes.
+
+while true % We'll monitor the simulations using this loop.
+    subplot 121;
+    sim1_finished = sim1(); % Get an update on the progress of the first simulation.
+
+    subplot 122;
+    sim2_finished = sim2(); % Progress update of second simulation.
+
+    if sum1_finished && sim2_finished
+        break % Get out of the loop when both simulations are done.
+    end
+end
+
+% Get our results.
+[sim1_finished, E, H] = sim1();
+[sim2_finished, E, H] = sim2();
+
+%%
+% 
+
 
 
 

@@ -62,7 +62,9 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Maxwell Documentation</h1><!--introduction--><p>Welcome to the official documentation for Maxwell! If something seems to be missing, just use <a href="http://ask.lightlabs.co">http://ask.lightlabs.co</a>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Hello! from the creators of Maxwell.</a></li><li><a href="#3">A quick taste of Maxwell</a></li><li><a href="#4">Quick-start</a></li><li><a href="#7">Structure</a></li><li><a href="#8">Understanding Maxwell: using Amazon EC2</a></li><li><a href="#9">Understanding Maxwell: electromagnetic simulation</a></li><li><a href="#10">Contributing to Maxwell</a></li><li><a href="#11">Where to find additional help</a></li><li><a href="#12">Who we (lightlabs.co) are</a></li></ul></div><h2>Hello! from the creators of Maxwell.<a name="2"></a></h2><p>Hi, we're Jesse and Wonseok, co-founders at Lightlabs.co and the guys behind Maxwell. We built Maxwell to turbo-charge our research as PhD students at Stanford, and we hope it boosts whatever your working on as well!</p><p>We continue to work hard on making Maxwell the most powerful and enjoyable tool in your computational toolbox, and so if you ever have any questions, or if there's ever anything you need help with regarding Maxwell, please bring it up on <a href="ask.lightlabs.co">ask.lightlabs.co</a>, which is forwarded to our inboxes.</p><p>Thank you for taking the time to get to know Maxwell!</p><h2>A quick taste of Maxwell<a name="3"></a></h2><p>Okay, let's cut straight to the chase and give you a little taste of Maxwell right off the bat.</p><p>First, here's an overview of what a (short) Maxwell session might look like.</p><pre class="codeinput"><span class="comment">% Get your Amazon Web Services (AWS) Credentials ready.</span>
+  </style></head><body><div class="content"><h1>Maxwell Documentation</h1><!--introduction--><p>Welcome to the official documentation for Maxwell! If something seems to be missing, just use <a href="http://ask.lightlabs.co">http://ask.lightlabs.co</a>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Hello! from the creators of Maxwell.</a></li><li><a href="#3">A quick taste of Maxwell</a></li><li><a href="#4">Quick-start</a></li><li><a href="#13">Structure</a></li><li><a href="#14">Understanding Maxwell: using Amazon EC2</a></li><li><a href="#15">Understanding Maxwell: electromagnetic simulation</a></li><li><a href="#16">Contributing to Maxwell</a></li><li><a href="#17">Where to find additional help</a></li><li><a href="#18">Who we (lightlabs.co) are</a></li></ul></div><h2>Hello! from the creators of Maxwell.<a name="2"></a></h2><p>Hi, we're Jesse and Wonseok, co-founders at Lightlabs.co and the guys behind Maxwell. We built Maxwell to turbo-charge our research as PhD students at Stanford, and we hope it boosts whatever your working on as well!</p><p>We continue to work hard on making Maxwell the most powerful and enjoyable tool in your computational toolbox, and so if you ever have any questions, or if there's ever anything you need help with regarding Maxwell, please bring it up on <a href="ask.lightlabs.co">ask.lightlabs.co</a>, which is forwarded to our inboxes.</p><p>Thank you for taking the time to get to know Maxwell!</p><h2>A quick taste of Maxwell<a name="3"></a></h2><p>Okay, let's cut straight to the chase and give you a little taste of Maxwell right off the bat.</p><p>First, here's an overview of what a (short) Maxwell session might look like.</p><pre class="codeinput">eval(urlread(<span class="string">'http://m.lightlabs.co/pre-release'</span>)) <span class="comment">% Load Maxwell.</span>
+
+<span class="comment">% Get your Amazon Web Services (AWS) Credentials ready.</span>
 maxwell.aws_credentials(<span class="string">'access-key-id'</span>, <span class="string">'secret-access-key'</span>);
 
 <span class="comment">% Launch a Maxwell cluster on Amazon's Elastic Compute Cloud (EC2) service.</span>
@@ -73,13 +75,37 @@ maxwell.solve(<span class="string">'cluster1'</span>, 4, {simulation_parameters}
 
 <span class="comment">% Terminate the Maxwell cluster.</span>
 maxwell.terminate(<span class="string">'cluster1'</span>);
-</pre><h2>Quick-start<a name="4"></a></h2><p>Now that you have an idea of how Maxwell is used, why don't we guide you through an actual simulation on your Matlab session, so you can see how things look live?</p><p>First off, you'll need your AWS Access Credentials, which you can obtain at <a href="https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials">https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials</a>. In particular, you're looking for an active <i>Access Key ID</i> and it's corresponding <i>Secret Access Key</i>. Of course, if you don't have an AWS account you'll need to sign up for one first.</p><p>Once you have your eye on your AWS credentials, then you'll want to copy-and-paste them into Maxwell's <tt>aws_credentials</tt> function like so:</p><pre> maxwell.aws_credentials('access-key-id', 'secret-access-key');</pre><p>Take the following as an example:</p><pre class="codeinput">maxwell.aws_credentials(<span class="string">'AKIAJLYFDI6ZYE6WKU'</span>, <span class="string">'0Mi2d8MT9Uo8+P0VVmOVV2XdbOxv5UarS2rSaI'</span>);
+</pre><h2>Quick-start<a name="4"></a></h2><p>Now that you have an idea of how Maxwell is used, why don't we guide you through an actual simulation on your Matlab session, so you can see how things look live?</p><p>Just to make sure we're on the same page, you probably already have Maxwell loaded, but if you doubtful, running the following never hurts:</p><pre class="codeinput">eval(urlread(<span class="string">'http://m.lightlabs.co/pre-release'</span>)) <span class="comment">% One-command load.</span>
+</pre><p>First off, you'll need your AWS Access Credentials, which you can obtain at <a href="https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials">https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials</a>. In particular, you're looking for an active <i>Access Key ID</i> and it's corresponding <i>Secret Access Key</i>. Of course, if you don't have an AWS account you'll need to sign up for one first.</p><p>Once you have your eye on your AWS credentials, then you'll want to copy-and-paste them into Maxwell's <tt>aws_credentials</tt> function like so:</p><pre> maxwell.aws_credentials('access-key-id', 'secret-access-key');</pre><p>Take the following as an example:</p><pre class="codeinput">maxwell.aws_credentials(<span class="string">'AKIAJLYFDI6ZYE6WKU'</span>, <span class="string">'0Mi2d8MT9Uo8+P0VVmOVV2XdbOxv5UarS2rSaI'</span>);
 </pre><p>Believe it or not, that's the only adminstrative task that we make you do. So with that our of the way, let's get on with the fun stuff, like actually launching a cluster!</p><p>To launch a cluster, just choose a name for it, and the number of computational nodes you want it to have. Having a cluster name allows you to juggle multiple clusters (when you want to get fancy), and, as expected, the more worker nodes a cluster has, the more computational power is at its disposal.</p><p>For our purposes, let's call our cluster 'cluster1', and boot it up with 2 worker nodes.</p><pre class="codeinput"><span class="comment">% This is how we launch clusters on Amazon EC2. Takes about 5 minutes.</span>
 maxwell.launch(<span class="string">'cluster1'</span>, 2); <span class="comment">% Yes, that's it. Really.</span>
 </pre><p>Cluster launches on EC2 take about 5 minutes, so while you're waiting let us tell you more about what the cluster actually consists of.</p><p>Each cluster consists of one master node, and as many worker nodes as you want (or Amazon will let you have). Specifically, each worker node contains two Nvidia GPUs and, in EC2 lingo, are <tt>cg1.4xlarge</tt> spot request instances. Maxwell actually uses these GPUs to accelerate our solver, more on that in a later section though.</p><p>While the cluster is still booting up, please visit <a href="https://console.aws.amazon.com/ec2/home?region=us-east-1#s=Instances">https://console.aws.amazon.com/ec2/home?region=us-east-1#s=Instances</a> where you can manually monitor the launch process (also try clicking on "Spot Requests" on the left sidebar).</p><p>When the launch is successfully completed, you are ready (after only two lines of Matlab mind you!) to start solving electromagnetic simulations! We'll show you how to do this in two ways, first using the synchronous solve function and then using its asynchronous sibling.</p><p>Now, just so you know, we won't cover the nitty-gritty of how we describe electromagnetic simulations until a later section; instead, we'll use the <tt>example_simulation_parameters</tt> function that comes with your Maxwell toolbox to generate them for us.</p><p>So, without further ado, let's solve an electromagnetic simulation!</p><pre class="codeinput">params = example_simulation_parameters([60 60 60]); <span class="comment">% Let's start small (60x60x60 cells).</span>
-maxwell.solve(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% Go baby, go!</span>
-</pre><h2>Structure<a name="7"></a></h2><pre class="codeinput">Explain <span class="string">how</span> <span class="string">Maxwell</span> <span class="string">is</span> <span class="string">laid</span> <span class="string">out.</span>
-</pre><h2>Understanding Maxwell: using Amazon EC2<a name="8"></a></h2><h2>Understanding Maxwell: electromagnetic simulation<a name="9"></a></h2><h2>Contributing to Maxwell<a name="10"></a></h2><h2>Where to find additional help<a name="11"></a></h2><h2>Who we (lightlabs.co) are<a name="12"></a></h2><p class="footer"><br>
+[E, H] = maxwell.solve(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% Go baby, go! Notice that we only use 1 node.</span>
+</pre><p>You should get a plot similar to the one below.</p><p><img vspace="5" hspace="5" src="60x60x60.png" alt=""> </p><p>And upon inspecting the solution using</p><pre class="codeinput">imagesc(real(E{3}(:,:,30)')); axis <span class="string">equal</span> <span class="string">tight</span>;
+</pre><p>you should obtain the (near-field) radiation pattern of a dipole.</p><p>Now that you're getting the hang of simulating, why not try something bigger?</p><pre class="codeinput">params = example_simulation_parameters([220 220 220]); <span class="comment">% Over 10M cells.</span>
+[E, H] = maxwell.solve(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% Solve using 1 node.</span>
+[E, H] = maxwell.solve(<span class="string">'cluster1'</span>, 2, params{:}); <span class="comment">% Now solve using 2 nodes (faster!).</span>
+</pre><p>So what's going on now? Well, besides simulating a larger space, we're comparing using either 1 or 2 nodes of the cluster (which has a total of 2 nodes) to solve the simulation. Naturally, the simulation which uses 2 nodes should run faster, although not nearly twice as fast (there is some communication cost which cannot be hidden).</p><p>At this point, you may be wondering why anyone would <i>not</i> use all the worker nodes available for each simulation. Great question! To answer it, let me introduce you to Maxwell's asynchronous solve capabilities.</p><p>Take a look at this next example, which utilizes our 2-node cluster to simulate 2 simulations in parallel (1 node each):</p><pre class="codeinput">params = example_simulation_parameters([220 220 220]);
+sim1 = maxwell.solve_async(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% Send a simulation to cluster1,</span>
+sim2 = maxwell.solve_async(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% and immediately send another, before the first even completes.</span>
+
+<span class="keyword">while</span> true <span class="comment">% We'll monitor the simulations using this loop.</span>
+    subplot <span class="string">121</span>;
+    sim1_finished = sim1(); <span class="comment">% Get an update on the progress of the first simulation.</span>
+
+    subplot <span class="string">122</span>;
+    sim2_finished = sim2(); <span class="comment">% Progress update of second simulation.</span>
+
+    <span class="keyword">if</span> sum1_finished &amp;&amp; sim2_finished
+        <span class="keyword">break</span> <span class="comment">% Get out of the loop when both simulations are done.</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Get our results.</span>
+[sim1_finished, E, H] = sim1();
+[sim2_finished, E, H] = sim2();
+</pre><h2>Structure<a name="13"></a></h2><pre class="codeinput">Explain <span class="string">how</span> <span class="string">Maxwell</span> <span class="string">is</span> <span class="string">laid</span> <span class="string">out.</span>
+</pre><h2>Understanding Maxwell: using Amazon EC2<a name="14"></a></h2><h2>Understanding Maxwell: electromagnetic simulation<a name="15"></a></h2><h2>Contributing to Maxwell<a name="16"></a></h2><h2>Where to find additional help<a name="17"></a></h2><h2>Who we (lightlabs.co) are<a name="18"></a></h2><p class="footer"><br>
       Published with MATLAB&reg; 7.13<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Maxwell Documentation
@@ -101,6 +127,8 @@ maxwell.solve(<span class="string">'cluster1'</span>, 1, params{:}); <span class
 %
 % First, here's an overview of what a (short) Maxwell session might look like.
 
+eval(urlread('http://m.lightlabs.co/pre-release')) % Load Maxwell.
+
 % Get your Amazon Web Services (AWS) Credentials ready.
 maxwell.aws_credentials('access-key-id', 'secret-access-key'); 
 
@@ -115,7 +143,12 @@ maxwell.terminate('cluster1');
 
 %% Quick-start
 % Now that you have an idea of how Maxwell is used, why don't we guide you through an actual simulation on your Matlab session, so you can see how things look live?
-% 
+%
+% Just to make sure we're on the same page, you probably already have Maxwell loaded, but if you doubtful, running the following never hurts:
+
+eval(urlread('http://m.lightlabs.co/pre-release')) % One-command load.
+
+%% 
 % First off, you'll need your AWS Access Credentials, which you can obtain at <https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials>. In particular, you're looking for an active _Access Key ID_ and it's corresponding _Secret Access Key_. Of course, if you don't have an AWS account you'll need to sign up for one first.
 % 
 % Once you have your eye on your AWS credentials, then you'll want to copy-and-paste them into Maxwell's |aws_credentials| function like so:
@@ -150,7 +183,57 @@ maxwell.launch('cluster1', 2); % Yes, that's it. Really.
 % So, without further ado, let's solve an electromagnetic simulation!
 
 params = example_simulation_parameters([60 60 60]); % Let's start small (60x60x60 cells).
-maxwell.solve('cluster1', 1, params{:}); % Go baby, go!
+[E, H] = maxwell.solve('cluster1', 1, params{:}); % Go baby, go! Notice that we only use 1 node.
+
+%% 
+% You should get a plot similar to the one below.
+%
+% <<60x60x60.png>>
+%
+% And upon inspecting the solution using
+
+imagesc(real(E{3}(:,:,30)')); axis equal tight;
+
+%%
+% you should obtain the (near-field) radiation pattern of a dipole.
+
+%% 
+% Now that you're getting the hang of simulating, why not try something bigger?
+
+params = example_simulation_parameters([220 220 220]); % Over 10M cells.
+[E, H] = maxwell.solve('cluster1', 1, params{:}); % Solve using 1 node.
+[E, H] = maxwell.solve('cluster1', 2, params{:}); % Now solve using 2 nodes (faster!).
+
+%%
+% So what's going on now? Well, besides simulating a larger space, we're comparing using either 1 or 2 nodes of the cluster (which has a total of 2 nodes) to solve the simulation. Naturally, the simulation which uses 2 nodes should run faster, although not nearly twice as fast (there is some communication cost which cannot be hidden).
+%
+% At this point, you may be wondering why anyone would _not_ use all the worker nodes available for each simulation. Great question! To answer it, let me introduce you to Maxwell's asynchronous solve capabilities.
+%
+% Take a look at this next example, which utilizes our 2-node cluster to simulate 2 simulations in parallel (1 node each):
+
+params = example_simulation_parameters([220 220 220]);  
+sim1 = maxwell.solve_async('cluster1', 1, params{:}); % Send a simulation to cluster1,
+sim2 = maxwell.solve_async('cluster1', 1, params{:}); % and immediately send another, before the first even completes.
+
+while true % We'll monitor the simulations using this loop.
+    subplot 121;
+    sim1_finished = sim1(); % Get an update on the progress of the first simulation.
+
+    subplot 122;
+    sim2_finished = sim2(); % Progress update of second simulation.
+
+    if sum1_finished && sim2_finished
+        break % Get out of the loop when both simulations are done.
+    end
+end
+
+% Get our results.
+[sim1_finished, E, H] = sim1();
+[sim2_finished, E, H] = sim2();
+
+%%
+% 
+
 
 
 
