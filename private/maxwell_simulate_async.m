@@ -280,27 +280,36 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
         % Figure out which figure to plot the error to.
         if isempty(varargin)
             figure_handle = gcf;
+            ha = gca;
         else
             figure_handle = varargin{1};
+            ha = varargin{2};
         end
 
-		set(0, 'CurrentFigure', figure_handle);
-		ha = gca;
+        try
+            set(0, 'CurrentFigure', figure_handle);
+            subplot(ha);
+        catch
+            set(0, 'CurrentFigure', gcf);
+        end
+
         semilogy(plot_data, 'b-'); % Plot with a red 'x' at the most recent point.
-        hold(ha, 'on'); semilogy(length(plot_data), plot_data(end), 'rx'); hold(ha, 'off');
+        hold on; semilogy(length(plot_data), plot_data(end), 'rx'); hold off;
+
         % hold on; semilogy(length(plot_data), plot_data(end), 'rx'); hold off;
         title(recent_line);
         ylabel('residual');
         xlabel('iterations');
         drawnow
 
+        % Store temporary return values.
+        success = is_success;
+        residuals = res_log;
+        E_out = {};
+        H_out = {};
 
         if is_executing % Simulation not yet done, exit without downloading.
             is_finished = false;
-            success = is_success;
-            residuals = res_log;
-            E_out = {};
-            H_out = {};
             return
         end
 
@@ -308,6 +317,12 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
         reader.close();
         inputStream.close();
         outputStream.close();
+
+        % If only one output argument, don't download yet.
+        if nargout <= 1
+            is_finished = true;
+            return
+        end
 
 
             %
@@ -400,6 +415,8 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
 
     end % End of inline function sim_callback().
     
+    sim_callback(0);
+
     % Return the callback function to let the user complete the simulation.
     sim_finish = @() sim_callback(0.1);
     return

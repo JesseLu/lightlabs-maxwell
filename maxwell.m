@@ -113,7 +113,7 @@ function [E, H, err, success] = solve(varargin)
 % Example:
 %   Not yet available...
 
-    sim_finish = maxwell_simulate_async(varargin{:}, gcf);
+    sim_finish = maxwell_simulate_async(varargin{:}, gcf, gca);
     while ~sim_finish() % Wait for simulation to finish.
 	end
     [is_finished, E, H, err, success] = sim_finish();
@@ -154,7 +154,7 @@ function [finish_solve] = solve_async(varargin)
 %       The output parameters (E, H, err, and success) are idential to those from 
 %       maxwell.solve().
         
-    finish_solve = maxwell_simulate_async(varargin{:});
+    finish_solve = maxwell_simulate_async(varargin{:}, gcf, gca);
 end
 
 function terminate(cluster_name)
