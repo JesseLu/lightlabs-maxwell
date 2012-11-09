@@ -172,7 +172,10 @@ maxwell.terminate('cluster1'); % Bye-bye for now.
 %
 % With the understanding of these two basic ideas, you should be well prepared to understand how Maxwell uses Amazon EC2.
 %
-% *What is a Maxwell cluster made of?*
+% *What is a Maxwell cluster made of?* A Maxwell cluster is made up of 1 master node, and a variable number of worker nodes that you choose. In Maxwell terminology, a 2-node cluster consists of 1 master and 2 worker nodes.
+%
+% While the master node does not take part in computational tasks, it serves as a critical central repository for input and output simulation files. In EC2 terminology, it is an on-demand m1.large instance
+%
 % Starcluster, master-nodes, spot requests, GPU instances, queueing system
 %
 % *How do I get charged?*

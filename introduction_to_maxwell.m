@@ -15,10 +15,6 @@
 %           this step. Also, a <a href="http://www.iorad.com/?a=app.embed&remote=true&accessCode=GUEST&module=4897&mt=How-to-get-your-AWS-credentials">step-by-step tutorial</a> is available for this step 
 %           (may need to be opened outside of Matlab).
 %           
-%       2. <a href="https://portal.aws.amazon.com/gp/aws/user/subscription/index.html?ie=UTF8&offeringCode=C1FC9088">Purchase the Maxwell subscription from Amazon payments</a> 
-%           The subscription will send $0.99/hr to lightlabs.co on top of 
-%           the usual AWS charges for each cluster you use.
-%       
 %   And that's it! Just a few words before we let you loose.
 %   
 %       We don't mess up your system -- i.e. you need to reload Maxwell every 
