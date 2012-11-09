@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Maxwell Documentation</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-07"><meta name="DC.source" content="maxwell.m"><style type="text/css">
+      --><title>Maxwell Documentation</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-11-09"><meta name="DC.source" content="maxwell.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -62,7 +62,7 @@ p.footer {
   color: gray;
 }
 
-  </style></head><body><div class="content"><h1>Maxwell Documentation</h1><!--introduction--><p>Welcome to the official documentation for Maxwell! If something seems to be missing, just use <a href="http://ask.lightlabs.co">http://ask.lightlabs.co</a>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Hello! from the creators of Maxwell.</a></li><li><a href="#3">A quick taste of Maxwell</a></li><li><a href="#4">Quick-start</a></li><li><a href="#13">Structure</a></li><li><a href="#14">Understanding Maxwell: using Amazon EC2</a></li><li><a href="#15">Understanding Maxwell: electromagnetic simulation</a></li><li><a href="#16">Contributing to Maxwell</a></li><li><a href="#17">Where to find additional help</a></li><li><a href="#18">Who we (lightlabs.co) are</a></li></ul></div><h2>Hello! from the creators of Maxwell.<a name="2"></a></h2><p>Hi, we're Jesse and Wonseok, co-founders at Lightlabs.co and the guys behind Maxwell. We built Maxwell to turbo-charge our research as PhD students at Stanford, and we hope it boosts whatever your working on as well!</p><p>We continue to work hard on making Maxwell the most powerful and enjoyable tool in your computational toolbox, and so if you ever have any questions, or if there's ever anything you need help with regarding Maxwell, please bring it up on <a href="ask.lightlabs.co">ask.lightlabs.co</a>, which is forwarded to our inboxes.</p><p>Thank you for taking the time to get to know Maxwell!</p><h2>A quick taste of Maxwell<a name="3"></a></h2><p>Okay, let's cut straight to the chase and give you a little taste of Maxwell right off the bat.</p><p>First, here's an overview of what a (short) Maxwell session might look like.</p><pre class="codeinput">eval(urlread(<span class="string">'http://m.lightlabs.co/pre-release'</span>)) <span class="comment">% Load Maxwell.</span>
+  </style></head><body><div class="content"><h1>Maxwell Documentation</h1><!--introduction--><p>Welcome to the official documentation for Maxwell! If something seems to be missing, just use <a href="http://ask.lightlabs.co">http://ask.lightlabs.co</a>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Hello! from the creators of Maxwell.</a></li><li><a href="#3">A quick taste of Maxwell</a></li><li><a href="#4">Quick-start</a></li><li><a href="#14">Structure</a></li><li><a href="#15">Understanding Maxwell: using Amazon EC2</a></li><li><a href="#16">Understanding Maxwell: electromagnetic simulation</a></li><li><a href="#17">Contributing to Maxwell</a></li><li><a href="#18">Where to find additional help</a></li><li><a href="#19">Who we (lightlabs.co) are</a></li></ul></div><h2>Hello! from the creators of Maxwell.<a name="2"></a></h2><p>Hi, we're Jesse and Wonseok, co-founders at Lightlabs.co and the guys behind Maxwell. We built Maxwell to turbo-charge our research as PhD students at Stanford, and we hope it boosts whatever your working on as well!</p><p>We continue to work hard on making Maxwell the most powerful and enjoyable tool in your computational toolbox, and so if you ever have any questions, or if there's ever anything you need help with regarding Maxwell, please bring it up on <a href="ask.lightlabs.co">ask.lightlabs.co</a>, which is forwarded to our inboxes.</p><p>Thank you for taking the time to get to know Maxwell!</p><h2>A quick taste of Maxwell<a name="3"></a></h2><p>Okay, let's cut straight to the chase and give you a little taste of Maxwell right off the bat.</p><p>First, here's an overview of what a (short) Maxwell session might look like.</p><pre class="codeinput">eval(urlread(<span class="string">'http://m.lightlabs.co/pre-release'</span>)) <span class="comment">% Load Maxwell.</span>
 
 <span class="comment">% Get your Amazon Web Services (AWS) Credentials ready.</span>
 maxwell.aws_credentials(<span class="string">'access-key-id'</span>, <span class="string">'secret-access-key'</span>);
@@ -79,33 +79,27 @@ maxwell.terminate(<span class="string">'cluster1'</span>);
 </pre><p>First off, you'll need your AWS Access Credentials, which you can obtain at <a href="https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials">https://portal.aws.amazon.com/gp/aws/securityCredentials#access_credentials</a>. In particular, you're looking for an active <i>Access Key ID</i> and it's corresponding <i>Secret Access Key</i>. Of course, if you don't have an AWS account you'll need to sign up for one first.</p><p>Once you have your eye on your AWS credentials, then you'll want to copy-and-paste them into Maxwell's <tt>aws_credentials</tt> function like so:</p><pre> maxwell.aws_credentials('access-key-id', 'secret-access-key');</pre><p>Take the following as an example:</p><pre class="codeinput">maxwell.aws_credentials(<span class="string">'AKIAJLYFDI6ZYE6WKU'</span>, <span class="string">'0Mi2d8MT9Uo8+P0VVmOVV2XdbOxv5UarS2rSaI'</span>);
 </pre><p>Believe it or not, that's the only adminstrative task that we make you do. So with that our of the way, let's get on with the fun stuff, like actually launching a cluster!</p><p>To launch a cluster, just choose a name for it, and the number of computational nodes you want it to have. Having a cluster name allows you to juggle multiple clusters (when you want to get fancy), and, as expected, the more worker nodes a cluster has, the more computational power is at its disposal.</p><p>For our purposes, let's call our cluster 'cluster1', and boot it up with 2 worker nodes.</p><pre class="codeinput"><span class="comment">% This is how we launch clusters on Amazon EC2. Takes about 5 minutes.</span>
 maxwell.launch(<span class="string">'cluster1'</span>, 2); <span class="comment">% Yes, that's it. Really.</span>
-</pre><p>Cluster launches on EC2 take about 5 minutes, so while you're waiting let us tell you more about what the cluster actually consists of.</p><p>Each cluster consists of one master node, and as many worker nodes as you want (or Amazon will let you have). Specifically, each worker node contains two Nvidia GPUs and, in EC2 lingo, are <tt>cg1.4xlarge</tt> spot request instances. Maxwell actually uses these GPUs to accelerate our solver, more on that in a later section though.</p><p>While the cluster is still booting up, please visit <a href="https://console.aws.amazon.com/ec2/home?region=us-east-1#s=Instances">https://console.aws.amazon.com/ec2/home?region=us-east-1#s=Instances</a> where you can manually monitor the launch process (also try clicking on "Spot Requests" on the left sidebar).</p><p>When the launch is successfully completed, you are ready (after only two lines of Matlab mind you!) to start solving electromagnetic simulations! We'll show you how to do this in two ways, first using the synchronous solve function and then using its asynchronous sibling.</p><p>Now, just so you know, we won't cover the nitty-gritty of how we describe electromagnetic simulations until a later section; instead, we'll use the <tt>example_simulation_parameters</tt> function that comes with your Maxwell toolbox to generate them for us.</p><p>So, without further ado, let's solve an electromagnetic simulation!</p><pre class="codeinput">params = example_simulation_parameters([60 60 60]); <span class="comment">% Let's start small (60x60x60 cells).</span>
+</pre><p>Cluster launches on EC2 take about 5 minutes, so while you're waiting let us tell you more about what the cluster actually consists of.</p><p>Each cluster consists of one master node, and as many worker nodes as you want (or Amazon will let you have). Specifically, each worker node contains two Nvidia GPUs and, in EC2 lingo, are <tt>cg1.4xlarge</tt> spot request instances. Maxwell actually uses these GPUs to accelerate our solver, more on that in a later section though.</p><p>While the cluster is still booting up, please visit <a href="https://console.aws.amazon.com/ec2/home?region=us-east-1#s=Instances">https://console.aws.amazon.com/ec2/home?region=us-east-1#s=Instances</a> where you can manually monitor the launch process (also try clicking on "Spot Requests" on the left sidebar).</p><p>When the launch is successfully completed, you are ready (after only two lines of Matlab mind you!) to start solving electromagnetic simulations! We'll show you how to do this in two ways, first using the <i>synchronous</i> solve function and then using its <i>asynchronous</i> sibling.</p><p>Now, just so you know, we won't cover the nitty-gritty of how we describe electromagnetic simulations until a later section; instead, we'll use the <tt>example_simulation_parameters</tt> function that comes with your Maxwell toolbox to generate them for us.</p><p>So, without further ado, let's solve an electromagnetic simulation!</p><pre class="codeinput">params = example_simulation_parameters([60 60 60]); <span class="comment">% Let's start small (60x60x60 cells).</span>
 [E, H] = maxwell.solve(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% Go baby, go! Notice that we only use 1 node.</span>
 </pre><p>You should get a plot similar to the one below.</p><p><img vspace="5" hspace="5" src="60x60x60.png" alt=""> </p><p>And upon inspecting the solution using</p><pre class="codeinput">imagesc(real(E{3}(:,:,30)')); axis <span class="string">equal</span> <span class="string">tight</span>;
-</pre><p>you should obtain the (near-field) radiation pattern of a dipole.</p><p>Now that you're getting the hang of simulating, why not try something bigger?</p><pre class="codeinput">params = example_simulation_parameters([220 220 220]); <span class="comment">% Over 10M cells.</span>
+</pre><p>you should obtain the (near-field) radiation pattern of a dipole.</p><p>Now that you're getting the hang of simulating, why not try something bigger?</p><pre class="codeinput">params = example_simulation_parameters([300 300 60]); <span class="comment">% Over 5 million cells.</span>
 [E, H] = maxwell.solve(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% Solve using 1 node.</span>
 [E, H] = maxwell.solve(<span class="string">'cluster1'</span>, 2, params{:}); <span class="comment">% Now solve using 2 nodes (faster!).</span>
-</pre><p>So what's going on now? Well, besides simulating a larger space, we're comparing using either 1 or 2 nodes of the cluster (which has a total of 2 nodes) to solve the simulation. Naturally, the simulation which uses 2 nodes should run faster, although not nearly twice as fast (there is some communication cost which cannot be hidden).</p><p>At this point, you may be wondering why anyone would <i>not</i> use all the worker nodes available for each simulation. Great question! To answer it, let me introduce you to Maxwell's asynchronous solve capabilities.</p><p>Take a look at this next example, which utilizes our 2-node cluster to simulate 2 simulations in parallel (1 node each):</p><pre class="codeinput">params = example_simulation_parameters([220 220 220]);
-sim1 = maxwell.solve_async(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% Send a simulation to cluster1,</span>
-sim2 = maxwell.solve_async(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% and immediately send another, before the first even completes.</span>
+</pre><p>So what's going on now? Well, besides simulating a larger space, we're comparing using either 1 or 2 nodes of the cluster (which has a total of 2 nodes) to solve the simulation. Naturally, the simulation which uses 2 nodes should run faster, although not nearly twice as fast (there is some communication cost which cannot be hidden).</p><p>At this point, you may be wondering why anyone would <i>not</i> use all the worker nodes available for each simulation. Great question! To answer it, let me introduce you to Maxwell's asynchronous solve capabilities.</p><p>The <tt>maxwell.solve_async</tt> function accepts the same input parameters as <tt>maxwell.solve</tt>, but instead of blocking until the simulation is completed, a callback function is returned. This callback function should then be repeatedly called in order to get updates on the progress of the simulation, and to download the result once the simulation is completed.</p><p>This is illustrated with the simple example below:</p><pre class="codeinput">params = example_simulation_parameters([300 300 60]);
+sim_finish = maxwell.solve_async(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% Asynchronous solve!</span>
+<span class="keyword">while</span> ~sim_finish(); <span class="keyword">end</span> <span class="comment">% Loop until sim_finish() returns true, signalling simulation completion.</span>
+[is_done, E, H] = sim_finish(); <span class="comment">% Download the solution fields.</span>
+</pre><p>Take a look at this next example, which utilizes our 2-node cluster to simulate 2 simulations in parallel (1 node each):</p><pre class="codeinput">params = example_simulation_parameters([300 300 60]);
+subplot <span class="string">121</span>; sim1 = maxwell.solve_async(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% Send a simulation to cluster1,</span>
+subplot <span class="string">122</span>; sim2 = maxwell.solve_async(<span class="string">'cluster1'</span>, 1, params{:}); <span class="comment">% and immediately send another, before the first even completes.</span>
 
-<span class="keyword">while</span> true <span class="comment">% We'll monitor the simulations using this loop.</span>
-    subplot <span class="string">121</span>;
-    sim1_finished = sim1(); <span class="comment">% Get an update on the progress of the first simulation.</span>
-
-    subplot <span class="string">122</span>;
-    sim2_finished = sim2(); <span class="comment">% Progress update of second simulation.</span>
-
-    <span class="keyword">if</span> sum1_finished &amp;&amp; sim2_finished
-        <span class="keyword">break</span> <span class="comment">% Get out of the loop when both simulations are done.</span>
-    <span class="keyword">end</span>
-<span class="keyword">end</span>
+<span class="keyword">while</span> ~all([sim1(), sim2()]); <span class="keyword">end</span> <span class="comment">% Monitor simulations until completed.</span>
 
 <span class="comment">% Get our results.</span>
 [sim1_finished, E, H] = sim1();
 [sim2_finished, E, H] = sim2();
-</pre><h2>Structure<a name="13"></a></h2><pre class="codeinput">Explain <span class="string">how</span> <span class="string">Maxwell</span> <span class="string">is</span> <span class="string">laid</span> <span class="string">out.</span>
-</pre><h2>Understanding Maxwell: using Amazon EC2<a name="14"></a></h2><h2>Understanding Maxwell: electromagnetic simulation<a name="15"></a></h2><h2>Contributing to Maxwell<a name="16"></a></h2><h2>Where to find additional help<a name="17"></a></h2><h2>Who we (lightlabs.co) are<a name="18"></a></h2><p class="footer"><br>
+</pre><h2>Structure<a name="14"></a></h2><pre class="codeinput">Explain <span class="string">how</span> <span class="string">Maxwell</span> <span class="string">is</span> <span class="string">laid</span> <span class="string">out.</span>
+</pre><h2>Understanding Maxwell: using Amazon EC2<a name="15"></a></h2><h2>Understanding Maxwell: electromagnetic simulation<a name="16"></a></h2><h2>Contributing to Maxwell<a name="17"></a></h2><h2>Where to find additional help<a name="18"></a></h2><h2>Who we (lightlabs.co) are<a name="19"></a></h2><p class="footer"><br>
       Published with MATLAB&reg; 7.13<br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Maxwell Documentation
@@ -176,7 +170,7 @@ maxwell.launch('cluster1', 2); % Yes, that's it. Really.
 %
 % While the cluster is still booting up, please visit <https://console.aws.amazon.com/ec2/home?region=us-east-1#s=Instances> where you can manually monitor the launch process (also try clicking on "Spot Requests" on the left sidebar).
 %
-% When the launch is successfully completed, you are ready (after only two lines of Matlab mind you!) to start solving electromagnetic simulations! We'll show you how to do this in two ways, first using the synchronous solve function and then using its asynchronous sibling.
+% When the launch is successfully completed, you are ready (after only two lines of Matlab mind you!) to start solving electromagnetic simulations! We'll show you how to do this in two ways, first using the _synchronous_ solve function and then using its _asynchronous_ sibling.
 %
 % Now, just so you know, we won't cover the nitty-gritty of how we describe electromagnetic simulations until a later section; instead, we'll use the |example_simulation_parameters| function that comes with your Maxwell toolbox to generate them for us.
 %
@@ -200,7 +194,7 @@ imagesc(real(E{3}(:,:,30)')); axis equal tight;
 %% 
 % Now that you're getting the hang of simulating, why not try something bigger?
 
-params = example_simulation_parameters([220 220 220]); % Over 10M cells.
+params = example_simulation_parameters([300 300 60]); % Over 5 million cells.
 [E, H] = maxwell.solve('cluster1', 1, params{:}); % Solve using 1 node.
 [E, H] = maxwell.solve('cluster1', 2, params{:}); % Now solve using 2 nodes (faster!).
 
@@ -209,23 +203,23 @@ params = example_simulation_parameters([220 220 220]); % Over 10M cells.
 %
 % At this point, you may be wondering why anyone would _not_ use all the worker nodes available for each simulation. Great question! To answer it, let me introduce you to Maxwell's asynchronous solve capabilities.
 %
+% The |maxwell.solve_async| function accepts the same input parameters as |maxwell.solve|, but instead of blocking until the simulation is completed, a callback function is returned. This callback function should then be repeatedly called in order to get updates on the progress of the simulation, and to download the result once the simulation is completed. 
+%
+% This is illustrated with the simple example below:
+
+params = example_simulation_parameters([300 300 60]);  
+sim_finish = maxwell.solve_async('cluster1', 1, params{:}); % Asynchronous solve!
+while ~sim_finish(); end % Loop until sim_finish() returns true, signalling simulation completion.
+[is_done, E, H] = sim_finish(); % Download the solution fields.
+
+%%
 % Take a look at this next example, which utilizes our 2-node cluster to simulate 2 simulations in parallel (1 node each):
 
-params = example_simulation_parameters([220 220 220]);  
-sim1 = maxwell.solve_async('cluster1', 1, params{:}); % Send a simulation to cluster1,
-sim2 = maxwell.solve_async('cluster1', 1, params{:}); % and immediately send another, before the first even completes.
+params = example_simulation_parameters([300 300 60]);  
+subplot 121; sim1 = maxwell.solve_async('cluster1', 1, params{:}); % Send a simulation to cluster1,
+subplot 122; sim2 = maxwell.solve_async('cluster1', 1, params{:}); % and immediately send another, before the first even completes.
 
-while true % We'll monitor the simulations using this loop.
-    subplot 121;
-    sim1_finished = sim1(); % Get an update on the progress of the first simulation.
-
-    subplot 122;
-    sim2_finished = sim2(); % Progress update of second simulation.
-
-    if sum1_finished && sim2_finished
-        break % Get out of the loop when both simulations are done.
-    end
-end
+while ~all([sim1(), sim2()]); end % Monitor simulations until completed.
 
 % Get our results.
 [sim1_finished, E, H] = sim1();
