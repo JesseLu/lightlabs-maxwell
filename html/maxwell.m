@@ -141,9 +141,9 @@ while ~all([sim1(), sim2()]); end % Monitor simulations until completed.
 [is_done2, E2, H2] = sim2();
 
 %%
-% I hope you are starting to get excited about the possibilities that Maxwell opens up! Namely, that supercomputer-like powers are available from simple Matlab sessions!
+% We hope you are starting to get excited about the possibilities that Maxwell opens up! Namely, that supercomputer-like powers are available from simple Matlab sessions!
 %
-% Now, I want you to try one more thing before we finish up. Remember how our cluster consists of only 2 nodes? What happens if we over-subscribe our cluster by asking it to solve two simulations using 2 nodes each? Try it out for yourself!
+% Now, we want you to try one more thing before we finish up. Remember how our cluster consists of only 2 nodes? What happens if we over-subscribe our cluster by asking it to solve two simulations using 2 nodes each? Try it out for yourself!
 
 params = example_simulation_parameters([200 200 60]);  
 subplot 121; sim1 = maxwell.solve_async('cluster1', 2, params{:}); % This simulation asks for 2 nodes now.
@@ -174,14 +174,71 @@ maxwell.terminate('cluster1'); % Bye-bye for now.
 %
 % *What is a Maxwell cluster made of?* A Maxwell cluster is made up of 1 master node, and a variable number of worker nodes that you choose. In Maxwell terminology, a 2-node cluster consists of 1 master and 2 worker nodes.
 %
-% While the master node does not take part in computational tasks, it serves as a critical central repository for input and output simulation files. In EC2 terminology, it is an on-demand m1.large instance
+% While the master node does not take part in computational tasks, it serves as a critical central repository for input and output simulation files. In EC2 terminology, it is an on-demand m1.large instance.
 %
-% Starcluster, master-nodes, spot requests, GPU instances, queueing system
+% The worker nodes is where all the numerical computation takes place. Each worker node is an EC2 GPU Cluster Compute instance (|cg1.4xlarge|). This means that each worker node contains two Nvidia M2050 GPUs, where most of Maxwell's numerical computation occurs. As opposed to the master node which is launched as an on-deman instance, Maxwell's worker nodes are launched as spot request instances (<http://aws.amazon.com/ec2/spot-instances/>), in order to take advantage of large cost-savings (>50%).
 %
-% *How do I get charged?*
-
-
+% The drawback to using spot request instances for the worker nodes is that there is the chance of sudden termination of these instances. This happens rather infrequently, but when it does, there is no need to panic. All that is lost is the simulations which had not yet completed. The master will still be available, so all previously completed but un-downloaded simulations will still be available.
+%
+% If a sudden termination should occur, simply download the finished simulations (using the callback function for asynchronous calls), terminate the cluster (in order to terminate the master), launch a new cluster and resume simulating.
+%
+% *Much of the functionality of the cluster is provided by StarCluster* (<http://star.mit.edu/cluster>), including the master-worker setup and the scheduling system. Starcluster is a great resource, and we highly encourage you to use it for your own scientific application on AWS.
+%
+% *Lastly, but most importantly is pricing*. More details to follow shortly.
 
 
 %% Understanding Maxwell: the finite-difference frequency-domain (FDFD) method
+%
+% Now that you have an understanding of how Maxwell uses Amazon EC2, all you need to understand is how Maxwell forms electromagnetic simulation problems. Note: referring to Wonseok's paper (<http://dx.doi.org/10.1016/j.jcp.2012.01.013>) will be helpful for this section if you want to dig _real_ deep.
+%
+% *Maxwell solves the finite-difference frequency-domain (FDFD) method for electromagnetics*, which involves solving the following time-harmonic equation for the electric field, $E$:
+% 
+% $$ (\nabla \times \mu^{-1} \nabla \times - \omega^2 \epsilon) E = -i \omega J. $$
+%
+% As opposed, to a finite-difference time-domain (FDTD) solver, Maxwell solves the electromagnetic wave equation above for a fixed frequency (now you know where the second 'F' in FDFD signifies). There are many advantages to an FDFD or frequency-domain approach:
+%
+% * direct access to the frequency-domain data,
+% * precise mathematical definition of simulation error,
+% * simple sourcing and measurement of input and output modes in the simulation,
+% * explicit definition of material dispersion, and
+% * ability to precisely calculate eigenmodes of the system.
+%
+% We hope that you will come to appreciate these advantages as you continue to use Maxwell.
+%
+% *For now, we want to show you how Maxwell gives you complete control over all simulation parameters*. These are the input parameters that are used in the |maxwell.solve| and |maxwell.solve_async| functions. So without further ado...
+%
+% * |omega|: This is the angular frequency of of the simulation and is equal to $2 \pi f$ where $f$ is the frequency of the simulation. This parameter must be a complex scalar.
+% * |d_prim, d_dual|: These parameters define the FDFD grid spacing for Maxwell. These parameters are usually the hardest to understand for newcomers to FDFD, so get ready... and take a look at the Yee grid, which Maxwell uses in the FDFD equation:
+%
+% <<yee.png>>
+%
+% Notice that all the $E$ and $H$ vector field components are not co-located and are actually shifted by half a grid length in various directions. A little complicated right? Well, it's the job of |d_prim| and |d_dual| to sort all these distances out.
+%
+% First, both |d_prim| and |d_dual| are 3-element cell arrays, where each element is a vector corresponding to the grid distances in the x-, y-, and z-directions. Secondly, |d_prim| refers to distances between adjacent $E$-field vectors, while |d_dual| refers to distances between adjacent $H$-field vectors.
+%
+% Specifically, |d_prim{1}| is a vector denoting the distances between adjacent $E_x$ vectors in the x-direction, |d_prim{2}| denotes the distances between $E_y$ vectors in the y-direction, and |d_prim{3}| gives the distances between $E_z$ vectors in the z-direction. |d_dual| is similar, just replace $E$ with $H$.
+%
+% Congratulations, you're _almost_ there. There's only one more thing that you need to know. Boundary conditions.
+%
+% Maxwell works on a periodic wrap-around grid. This affects |d_prim| and |d_dual| because they also denote the wrap-around distance between the last and first components in the grid. Specifically, the _first_ element of the |d_prim| vectors corresponds to the distance between the corresponding last and first element, while the _last_ element of the |d_dual| vectors corresponds to the distance between the appropriate last and first elements. Okay, it's easy from here on out.
+%
+% One last note though, you'll most likely want to supply a absorbing boundary condition for your simulation. In that case, make sure you implement the stretched-coordinate perfectly-matched layer (sc-PML) scheme as outlined in Wonseok's paper (<http://dx.doi.org/10.1016/j.jcp.2012.01.013>). The values for |d_prim| and |d_dual| can be complex.
+%
+% * |mu, epsilon, E, J|: These parameters are all also 3-element cell arrays. However, each element is a 3-dimensional array representing the x-, y-, or z-component of the corresponding vector field, in that order. Other than that, these values are pretty straightforward; |mu| and |epsilon| represent the permeability and permittivity of the simulation space, respectively. |E| denotes the starting value for the simulation (all zeros usually works, if not try random); and |J| denotes the current source.
+% * |max_iters|: This positive integer simply tells the solver to quit after so many iterations, even if convergence has not been reached.
+% * |err_thresh|: A positive number (usually |1e-6|) at which the solver terminates. The error is calculater as $\|Ax - b\| / \|b\|$; where $A = (\nabla \times \mu^{-1} \nabla \times - \omega^2 \epsilon)$, $x = E$, and $b = -i \omega J$.
+%
 
+%%
+% *Lastly, the output parameters for the solve functions are*:
+%
+% * |is_finished|: Only used for the asynchronous solve function. Set to |true| if the simulation is finished, |false| otherwise.
+% * |E, H|: These are the solution vector fields to the electromagnetic wave equation and are 3-element cell arrays where each element is a 3-dimensional array. 
+% * |err|: The error value at each iteration of the solve process.
+% * |success|: Set to |true| if convergence was attained, set to |false| otherwise.
+%
+
+%% Conclusion
+% So we hope that you are now off to the races with Maxwell!
+%
+% Once again, if anything is unclear or missing feel free to post on <http://ask.lightlabs.co> which we check feverishly! Happy simulating!
