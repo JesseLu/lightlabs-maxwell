@@ -64,8 +64,8 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
     end
 
     % Make sure the value for max_iters is valid.
-    if mod(max_iters,1) ~= 0 || max_iters <= 0 || ~isreal(max_iters)
-        error('MAX_ITERS must be a positive integer.');
+    if mod(max_iters,1) ~= 0 || max_iters <= 0 || ~isreal(max_iters) || max_iters > 1e8
+        error('MAX_ITERS must be a positive integer less than 1e8.');
     end
 
     % Make sure the value for err_thresh is valid.
