@@ -293,10 +293,17 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
             set(0, 'CurrentFigure', gcf);
         end
 
-        semilogy(plot_data, 'b-'); % Plot with a red 'x' at the most recent point.
-        hold on; semilogy(length(plot_data), plot_data(end), 'rx'); hold off;
+        semilogy(plot_data, 'b-'); % Plot convergence error.
 
-        % hold on; semilogy(length(plot_data), plot_data(end), 'rx'); hold off;
+        hold on; 
+        % Plot with a red 'x' at the most recent point.
+        semilogy(length(plot_data), plot_data(end), 'rx'); 
+
+        % Add dotted line to show target error.
+        a = axis;
+        semilogy(a(1:2), err_thresh * [1 1], 'k--');
+        hold off;
+
         title(recent_line);
         ylabel('residual');
         xlabel('iterations');
