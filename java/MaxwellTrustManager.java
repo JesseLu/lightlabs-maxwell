@@ -12,7 +12,7 @@ import java.io.ByteArrayInputStream;
 
 public class MaxwellTrustManager {
 
-    static final String controlCert = "-----BEGIN CERTIFICATE-----\nMIIClDCCAf2gAwIBAgIJAJQjiY9rIng/MA0GCSqGSIb3DQEBBQUAMGMxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIDAJDQTEhMB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQ\ndHkgTHRkMSQwIgYDVQQDDBttYXh3ZWxsLXNlcnZlci5saWdodGxhYnMuY28wHhcN\nMTMwMTE1MjAyMDAxWhcNMTQwMTE1MjAyMDAxWjBjMQswCQYDVQQGEwJVUzELMAkG\nA1UECAwCQ0ExITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDEkMCIG\nA1UEAwwbbWF4d2VsbC1zZXJ2ZXIubGlnaHRsYWJzLmNvMIGfMA0GCSqGSIb3DQEB\nAQUAA4GNADCBiQKBgQC47cFrtn3eZ9Y2rMwggWAtH6cVwjFyZEQo34fUBid81lr0\ntXIe72sujjB27KYInvf/ymLIDfmh5n4WqnUkOF39Mc4QQv0mLnzMnuJZnZBQl5mR\nDyA5LBYkeIPa4Z1azEUXlch5XlyGE/AVhsJYWrYQHnR5tYRwQw/ndtaJk2fvPwID\nAQABo1AwTjAdBgNVHQ4EFgQUbAYSQlW2B7r2Qtbe3C5AZAJjBgwwHwYDVR0jBBgw\nFoAUbAYSQlW2B7r2Qtbe3C5AZAJjBgwwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0B\nAQUFAAOBgQAoSq8AyT7WHEqKGZ7eYeEBBCNqR/Aa4ZKo8hL9mSCuADYZkkhcAGTG\ni4edoVtGZlFUhS+3T2pgWua/w+BQVz4HJ4UyFIWCK4cvAbcf5/QyFY/e9gJNuQBF\nP5S6kZNg059CHppV5T1u+cg3qZMZ/fvO8+ImwoHqD15/xuvQEHyXbQ==\n-----END CERTIFICATE-----";
+    static final String controlCert = "-----BEGIN CERTIFICATE-----\nMIICojCCAgugAwIBAgIJAIg2cJJQyMSEMA0GCSqGSIb3DQEBBQUAMGoxCzAJBgNV\nBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBX\naWRnaXRzIFB0eSBMdGQxIzAhBgNVBAMMGm1hc3Rlci1zZXJ2ZXIubGlnaHRsYWJz\nLmNvMB4XDTEzMDExNTIwNDA1MFoXDTE0MDExNTIwNDA1MFowajELMAkGA1UEBhMC\nQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdp\ndHMgUHR5IEx0ZDEjMCEGA1UEAwwabWFzdGVyLXNlcnZlci5saWdodGxhYnMuY28w\ngZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBALdT8SDiXR4/nGIiY3ENHWYp9un3\nNTljT99VHOuv5BKRAnOWWwFVGbue2pqlugLv63Xk5vq2TL7MICav7zAodcgEgvPP\nDCoCLTgl7pYlNjjByHHOTV9x/c93G3hy79gWYxhFrniLlf6PSiH+aOxi5JG0AvBh\nxtmjFl96IUMzFy2HAgMBAAGjUDBOMB0GA1UdDgQWBBQxg1ZohhqsIzRQL/2fdUrl\ne9TrnTAfBgNVHSMEGDAWgBQxg1ZohhqsIzRQL/2fdUrle9TrnTAMBgNVHRMEBTAD\nAQH/MA0GCSqGSIb3DQEBBQUAA4GBAEZOFz75eZS8clXdqPR6aoj7fA5xMblFKsrF\nUGaOPq1MZv3WxULowrZ+D6GnO8X30ctb4sCjZ0qVPqQCtvuiuUC5gSbO5cEam1hN\nfjp3MMNkBlVW55Hau0ZNjTJvKYmM9ttXL/D15tIZEl1X5Mu8s+kLDSS4u2KQRr+H\nsrrD6D+n\n-----END CERTIFICATE-----";
 
 
     static public TrustManager[] getManager() throws Exception {
@@ -38,7 +38,7 @@ class MyTrustManager implements X509TrustManager {
     KeyStore store = KeyStore.getInstance(KeyStore.getDefaultType());
     store.load(null, null);
     Certificate certificate = loadPemCert(cert);
-    store.setCertificateEntry("maxwell-control", certificate);
+    store.setCertificateEntry("maxwell-server", certificate);
 
     // create a TrustManager using our KeyStore
     TrustManagerFactory factory = TrustManagerFactory.getInstance(

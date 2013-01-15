@@ -68,8 +68,13 @@ function [urlConnection, errorid, errormsg] = my_urlreadwrite(urlChar, varargin)
         end
     end
 
-    % Set timeout.
-    urlConnection.setConnectTimeout(15e3); % 15-second window to establish connection.
-    urlConnection.setReadTimeout(120e3); % 2-minute window to read from connection.
+    %% Set timeout.
+
+    % 15-second window to establish connection.
+    urlConnection.setConnectTimeout(15e3); 
+    
+    % 10-minute window to read from connection.
+    % Window needs to be very long in case of a reset on server side.
+    urlConnection.setReadTimeout(600e3); 
 end
 
