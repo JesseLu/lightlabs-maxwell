@@ -4,7 +4,7 @@
 % self-signed ssl connection for https connections.
 % Requires the Maxwell java library to obtain the MaxwellTrustManager object.
 
-function [urlConnection, errorid, errormsg] = maxwell_urlreadwrite(urlChar, varargin)
+function [urlConnection, errorid, errormsg] = my_urlreadwrite(urlChar, varargin)
     % Default output arguments.
     urlConnection = [];
     errorid = '';

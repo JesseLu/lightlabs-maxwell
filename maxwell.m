@@ -1,12 +1,15 @@
 %% maxwell_simulate_async
 % Simulate!
  
-function [sim_finish] = maxwell_simulate_async(cluster_name, ...
+function [sim_finish] = maxwell_simulate_async( ...
                             omega, d_prim, d_dual, ...
                             mu, epsilon, E, J, ...
                             max_iters, err_thresh, varargin)
 
     view_progress = 'plot'; % Hardcoded, atleast for now...
+    
+    % If slow, don't do this every time. 
+    javaaddpath('http://s3.amazonaws.com/lightlabs-maxwell/Maxwell1.jar');
 
     % Check to make sure num_nodes is valid.
     num_nodes = 1;
@@ -120,8 +123,8 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, ...
     % [dns, pwd, cert] = my_clusterlocate(cluster_name);
 
     % POST parameters used to send the simulation to the cluster.
-    url = ['https://', 'master.lightlabs.co', ':29979'];
-    url = ['https://', '54.243.150.95', ':29979'];
+    url = ['https://', 'master-server.lightlabs.co', ':29979'];
+    url
     params = {'username', 'maxwell_user', ...
                 'password', 'pwd', ...
                 'nodes', 1}; % Two GPUs on each node.
