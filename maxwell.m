@@ -1,7 +1,7 @@
 %% maxwell_simulate_async
 % Simulate!
  
-function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
+function [sim_finish] = maxwell_simulate_async(cluster_name, ...
                             omega, d_prim, d_dual, ...
                             mu, epsilon, E, J, ...
                             max_iters, err_thresh, varargin)
@@ -9,11 +9,7 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
     view_progress = 'plot'; % Hardcoded, atleast for now...
 
     % Check to make sure num_nodes is valid.
-    [dns, pwd, cert, max_nodes] = my_clusterlocate(cluster_name);
-    if num_nodes > max_nodes
-        error(sprintf('Cluster %s consists of only %d nodes.', ...
-                        cluster_name, max_nodes));
-    end
+    num_nodes = 1;
 
 
         %
@@ -121,13 +117,14 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
         %
 
     % Obtain the cluster's information.
-    [dns, pwd, cert] = my_clusterlocate(cluster_name);
+    % [dns, pwd, cert] = my_clusterlocate(cluster_name);
 
     % POST parameters used to send the simulation to the cluster.
-    url = ['https://', dns, ':29979'];
+    url = ['https://', 'master.lightlabs.co', ':29979'];
+    url = ['https://', '54.243.150.95', ':29979'];
     params = {'username', 'maxwell_user', ...
-                'password', pwd, ...
-                'nodes', num2str(floor(2*num_nodes))}; % Two GPUs on each node.
+                'password', 'pwd', ...
+                'nodes', 1}; % Two GPUs on each node.
 
     % Make sure we have access to java. Needed for network http connections.
     if ~usejava('jvm')
@@ -145,7 +142,7 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
     send_start = tic;
 
     % Create a urlConnection.
-    [urlConnection, errorid, errormsg] = my_urlreadwrite(url, cert);
+    [urlConnection, errorid, errormsg] = my_urlreadwrite(url);
     if isempty(urlConnection)
         error(['Could not connect to url: ', url]);
     end
@@ -351,7 +348,7 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
                     url = redirect_to{l};
 
                     % Create a new urlConnection.
-                    [urlConnection, errorid, errormsg] = my_urlreadwrite(url, cert);
+                    [urlConnection, errorid, errormsg] = my_urlreadwrite(url);
                     if isempty(urlConnection)
                         error(['Could not connect to url: ', url]);
                     end
@@ -359,7 +356,7 @@ function [sim_finish] = maxwell_simulate_async(cluster_name, num_nodes, ...
                      % Open up http connections.
                     for k = 1 : N
                         urlConnections{k} = my_urlreadwrite(...
-                            [url, '/.maxwell.', job_name, '.', endings{k}], cert);
+                            [url, '/.maxwell.', job_name, '.', endings{k}]);
                         if isempty(urlConnections{k})
                             error(['Could not connect to url: ', url]);
                         end
