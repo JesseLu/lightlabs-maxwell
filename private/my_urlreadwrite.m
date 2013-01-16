@@ -14,6 +14,7 @@ function [urlConnection, errorid, errormsg] = my_urlreadwrite(urlChar, varargin)
     protocol = urlChar(1:min(find(urlChar==':'))-1);
 
     % Try to use the native handler, not the ice.* classes.
+    use_maxwell_cert = false;
     switch protocol
         case 'http'
             try
@@ -21,6 +22,10 @@ function [urlConnection, errorid, errormsg] = my_urlreadwrite(urlChar, varargin)
             catch exception %#ok
                 handler = [];
             end
+        case 'maxwell_https'
+            use_maxwell_cert = true;
+            urlChar = strrep(urlChar, 'maxwell_https', 'https');
+            handler = sun.net.www.protocol.https.Handler;
         case 'https'
             handler = sun.net.www.protocol.https.Handler;
         otherwise
@@ -56,13 +61,10 @@ function [urlConnection, errorid, errormsg] = my_urlreadwrite(urlChar, varargin)
         end
 
         % Allow a single self-signed certificate.
-        if strcmp(protocol, 'https')
+        if use_maxwell_cert
             sc = javax.net.ssl.SSLContext.getInstance('SSL');
-            if isempty(varargin)
-                maxwellCertManager = MaxwellTrustManager.getManager();
-            else
-                maxwellCertManager = MaxwellTrustManager.getManager(varargin{1});
-            end
+            maxwellCertManager = MaxwellTrustManager.getManager();
+            % maxwellCertManager = MaxwellTrustManager.getManager(varargin{1});
             sc.init([], maxwellCertManager, java.security.SecureRandom());
             urlConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         end

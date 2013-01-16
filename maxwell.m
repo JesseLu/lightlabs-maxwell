@@ -1,7 +1,7 @@
 %% maxwell_simulate_async
 % Simulate!
  
-function [sim_finish] = maxwell_simulate_async( ...
+function [sim_finish] = maxwell( ...
                             omega, d_prim, d_dual, ...
                             mu, epsilon, E, J, ...
                             max_iters, err_thresh, varargin)
@@ -124,11 +124,11 @@ function [sim_finish] = maxwell_simulate_async( ...
     % [dns, pwd, cert] = my_clusterlocate(cluster_name);
 
     % POST parameters used to send the simulation to the cluster.
-    url = ['https://', 'master-server.lightlabs.co', ':29979'];
+    url = ['maxwell_https://', 'master-server.lightlabs.co', ':29979'];
     url
     params = {'username', 'maxwell_user', ...
-                'password', 'pwd', ...
-                'nodes', 1}; % Two GPUs on each node.
+                'password', '3AV48ED90', ...
+                'nodes', '1'}; % Two GPUs on each node.
 
     % Make sure we have access to java. Needed for network http connections.
     if ~usejava('jvm')
@@ -350,6 +350,7 @@ function [sim_finish] = maxwell_simulate_async( ...
             for l = length(redirect_to) : -1 : 1
                 try
                     url = redirect_to{l};
+                    url
 
                     % Create a new urlConnection.
                     [urlConnection, errorid, errormsg] = my_urlreadwrite(url);
