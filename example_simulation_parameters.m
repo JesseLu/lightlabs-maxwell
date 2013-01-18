@@ -6,7 +6,7 @@ function [params] = example_simulation_parameters(dims)
     E = {zeros(dims), zeros(dims), zeros(dims)}; 
     J = E;
     J{1}(dims(1)/2, dims(2)/2, dims(3)/2) = 1;
-    params = {omega, s_prim, s_dual, f, f, E, J, 5e4, 1e-6};
+    params = {omega, s_prim, s_dual, f, f, E, J, 1e5, 1e-6};
 end
 
 

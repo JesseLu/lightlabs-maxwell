@@ -1,19 +1,20 @@
-%% maxwell_simulate_async
-% Simulate!
- 
-function [sim_finish] = maxwell( ...
-                            omega, d_prim, d_dual, ...
-                            mu, epsilon, E, J, ...
-                            max_iters, err_thresh, varargin)
+function [sim_finish] = maxwellFDS(omega, d_prim, d_dual, ...
+                                mu, epsilon, E, J, ...
+                                max_iters, err_thresh, varargin)
 
-    view_progress = 'plot'; % Hardcoded, atleast for now...
+    if isempty(varargin)
+        view_progress = 'plot';
+    else
+        view_progress = varargin{1};
+    end
+    my_disp = @(s) my_display_status(s, view_progress);
     
     % If slow, don't do this every time. 
     javaaddpath(strrep(mfilename('fullpath'), ...
-                        '/maxwell', '/java'));
+                        '/maxwellFDS', '/java'));
 
-    % Check to make sure num_nodes is valid.
-    num_nodes = 1;
+%     % Check to make sure num_nodes is valid.
+%     num_nodes = 1;
 
 
         %
@@ -125,7 +126,6 @@ function [sim_finish] = maxwell( ...
 
     % POST parameters used to send the simulation to the cluster.
     url = ['maxwell_https://', 'master-server.lightlabs.co', ':29979'];
-    url
     params = {'username', 'maxwell_user', ...
                 'password', '3AV48ED90', ...
                 'nodes', '1'}; % Two GPUs on each node.
@@ -142,8 +142,6 @@ function [sim_finish] = maxwell( ...
         %
         % SEND simulation.
         %
-
-    send_start = tic;
 
     % Create a urlConnection.
     [urlConnection, errorid, errormsg] = my_urlreadwrite(url);
@@ -179,9 +177,10 @@ function [sim_finish] = maxwell( ...
 
     outputStream.write(header.getBytes(), 0, header.length); % Send the header.
 
-    fprintf('Sending...'); % Send the file.
+    % fprintf('Sending...'); % Send the file.
+    my_disp('Sending...'); % Send the file.
     infile = java.io.FileInputStream(file);
-    stream_send({infile}, {outputStream}, 'sent');
+    stream_send({infile}, {outputStream}, 'sent', my_disp);
 
     outputStream.write(footer.getBytes(), 0, footer.length); % Send the footer.
 
@@ -226,7 +225,7 @@ function [sim_finish] = maxwell( ...
     res_log = []; % Stores the history of residual information.
     E = {}; % Stores E-field result.
     H = {}; % Stores H-field result.
-    recent_line = ''; % Remembers the last status line.
+    recent_line = 'Simulation sent'; % Remembers the last status line.
     is_executing = true; 
     is_done = false; % Persistent variable for is_finished.
     is_success = []; % Persistent variable for success.
@@ -237,7 +236,13 @@ function [sim_finish] = maxwell( ...
     % This function attempts to exit after INTERVAL seconds, but there is no
     % guarantee of this feature.
     function [is_finished, E_out, H_out, residuals, success] = ...
-                sim_callback(interval)
+                sim_callback(varargin)
+
+        if isempty(varargin)
+            interval = 0.1; % Default.
+        else 
+            interval = varargin{1};
+        end
 
         start_time = tic; % Timer to evaluate when we should exit.
         d = ''; 
@@ -278,37 +283,44 @@ function [sim_finish] = maxwell( ...
             plot_data = res_log;
 		end
 
-        % Figure out which figure to plot the error to.
-        if isempty(varargin)
+        if strcmp(view_progress, 'plot')
+            % Figure out which figure to plot the error to.
             figure_handle = gcf;
             ha = gca;
-        else
-            figure_handle = varargin{1};
-            ha = varargin{2};
+    %         if isempty(varargin)
+    %             figure_handle = gcf;
+    %             ha = gca;
+    %         else
+    %             figure_handle = varargin{1};
+    %             ha = varargin{2};
+    %         end
+
+            try
+                set(0, 'CurrentFigure', figure_handle);
+                subplot(ha);
+            catch
+                set(0, 'CurrentFigure', gcf);
+            end
+
+            semilogy(plot_data, 'b-'); % Plot convergence error.
+
+            hold on; 
+            % Plot with a red 'x' at the most recent point.
+            semilogy(length(plot_data), plot_data(end), 'rx'); 
+
+            % Add dotted line to show target error.
+            a = axis;
+            semilogy(a(1:2), err_thresh * [1 1], 'k--');
+            hold off;
+
+            ylabel('residual');
+            xlabel('iterations');
+            title(recent_line);
+            drawnow
+
+        elseif strcmp(view_progress, 'text')
+            my_disp(recent_line);
         end
-
-        try
-            set(0, 'CurrentFigure', figure_handle);
-            subplot(ha);
-        catch
-            set(0, 'CurrentFigure', gcf);
-        end
-
-        semilogy(plot_data, 'b-'); % Plot convergence error.
-
-        hold on; 
-        % Plot with a red 'x' at the most recent point.
-        semilogy(length(plot_data), plot_data(end), 'rx'); 
-
-        % Add dotted line to show target error.
-        a = axis;
-        semilogy(a(1:2), err_thresh * [1 1], 'k--');
-        hold off;
-
-        title(recent_line);
-        ylabel('residual');
-        xlabel('iterations');
-        drawnow
 
         % Store temporary return values.
         success = is_success;
@@ -350,7 +362,6 @@ function [sim_finish] = maxwell( ...
             for l = length(redirect_to) : -1 : 1
                 try
                     url = redirect_to{l};
-                    url
 
                     % Create a new urlConnection.
                     [urlConnection, errorid, errormsg] = my_urlreadwrite(url);
@@ -389,8 +400,8 @@ function [sim_finish] = maxwell( ...
             end
 
             % Download the simulation result files.
-            fprintf('Receiving...');
-            stream_send(inputStreams, files, 'received');
+            my_disp('Receiving...');
+            stream_send(inputStreams, files, 'received', my_disp);
             for k = 1 : N % Close the files and connections.
                 inputStreams{k}.close()
                 files{k}.close()
@@ -427,13 +438,13 @@ function [sim_finish] = maxwell( ...
     sim_callback(0);
 
     % Return the callback function to let the user complete the simulation.
-    sim_finish = @() sim_callback(0.1);
+    sim_finish = @sim_callback;
     return
 end
 
 % Function used to stream data from multiple input streams to (corresponding)
 % multiple output streams.
-function stream_send (in, out, action_name)
+function stream_send (in, out, action_name, display_fun)
 
     copier = MaxwellCopier; % Requires the Maxwell.jar library to be loaded.
 
@@ -455,14 +466,15 @@ function stream_send (in, out, action_name)
 
         if toc(status_time) > 0.3 || all(~running) % Periodically give updates.
             megabytes = copier.total_bytes_transferred / 1e6;
-            status_line = sprintf('[%1.2f MB %s (%1.2f MB/s)]', ...
+            status_line = sprintf('%1.2f MB %s (%1.2f MB/s)', ...
                 megabytes, action_name, megabytes/toc(start_time));
-            fprintf([repmat('\b', 1, prevlen), status_line]); % Write-over.
-            prevlen = length(status_line);
+            display_fun(status_line);
+%             fprintf([repmat('\b', 1, prevlen), status_line]); % Write-over.
+%             prevlen = length(status_line);
             status_time = tic;
         end
     end
-    fprintf('\n');
+    % fprintf('\n');
 end
 
 %% Write a complex 3D vector-field to an hdf5 file.
@@ -512,6 +524,26 @@ function h5write_complex(file, name, data)
     H5P.close(dcpl);
     H5D.close(dset);
     H5S.close(space);
+end
+
+function my_display_status(status_text, option)
+% Used to display text on command line or title area of a plot.
+    max_length = 60;
+    switch option
+        case 'text'
+            if length(status_text) > max_length
+                fprintf(status_text(1:max_length));
+            else 
+                fprintf([status_text, ...
+                        repmat(' ', 1, max_length - length(status_text))]);
+            end
+            fprintf(repmat('\b', 1, max_length));
+        case 'plot'
+            title(status_text);
+            drawnow
+        otherwise
+            error('Unrecognized option, must be either ''plot'' or ''text''');
+    end
 end
 
 
