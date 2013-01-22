@@ -3,12 +3,18 @@ function [cb] = stress_test(n, params)
 
     for i = 1 : n
         fprintf('%d: ', i);
-        cb{i} = maxwellFDS(params{:});
+        cb{i} = maxwell(params{:}, 'text');
+        fprintf('\n');
     end
 
     done = false * ones(n, 1);
     while ~all(done)
-        [done(i), E, H, err] = cb{i}(); 
+        fprintf('%d/%d: ', length(find(done)), n);
+        for i = 1 : n
+            [done(i), E, H, err] = cb{i}(10); 
+        end
+        pause(60);
+        fprintf('\n');
     end
 
 %     done = false * ones(n, 1);
