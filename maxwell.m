@@ -10,8 +10,8 @@ function [sim_finish] = maxwell(omega, d_prim, d_dual, ...
     my_disp = @(s) my_display_status(s, view_progress);
     
     % If slow, don't do this every time. 
-    javaaddpath(strrep([mfilename('fullpath'), 'wsjl'] ...
-                        [filesep, 'maxwell'], [filesep, 'java']));
+    javaaddpath(strrep([mfilename('fullpath'), 'wsjl'], ...
+                        [filesep, 'maxwellwsjl'], [filesep, 'java']));
 
 %     % Check to make sure num_nodes is valid.
 %     num_nodes = 1;
