@@ -4,7 +4,7 @@
 % self-signed ssl connection for https connections.
 % Requires the Maxwell java library to obtain the MaxwellTrustManager object.
 
-function [urlConnection, errorid, errormsg] = maxwell_urlreadwrite(urlChar, varargin)
+function [urlConnection, errorid, errormsg] = my_urlreadwrite(urlChar, varargin)
     % Default output arguments.
     urlConnection = [];
     errorid = '';
@@ -14,6 +14,7 @@ function [urlConnection, errorid, errormsg] = maxwell_urlreadwrite(urlChar, vara
     protocol = urlChar(1:min(find(urlChar==':'))-1);
 
     % Try to use the native handler, not the ice.* classes.
+    use_maxwell_cert = false;
     switch protocol
         case 'http'
             try
@@ -21,6 +22,10 @@ function [urlConnection, errorid, errormsg] = maxwell_urlreadwrite(urlChar, vara
             catch exception %#ok
                 handler = [];
             end
+        case 'maxwell_https'
+            use_maxwell_cert = true;
+            urlChar = strrep(urlChar, 'maxwell_https', 'https');
+            handler = sun.net.www.protocol.https.Handler;
         case 'https'
             handler = sun.net.www.protocol.https.Handler;
         otherwise
@@ -56,20 +61,22 @@ function [urlConnection, errorid, errormsg] = maxwell_urlreadwrite(urlChar, vara
         end
 
         % Allow a single self-signed certificate.
-        if strcmp(protocol, 'https')
+        if use_maxwell_cert
             sc = javax.net.ssl.SSLContext.getInstance('SSL');
-            if isempty(varargin)
-                maxwellCertManager = MaxwellTrustManager.getManager();
-            else
-                maxwellCertManager = MaxwellTrustManager.getManager(varargin{1});
-            end
+            maxwellCertManager = MaxwellTrustManager.getManager();
+            % maxwellCertManager = MaxwellTrustManager.getManager(varargin{1});
             sc.init([], maxwellCertManager, java.security.SecureRandom());
             urlConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
         end
     end
 
-    % Set timeout.
-    urlConnection.setConnectTimeout(15e3); % 15-second window to establish connection.
-    urlConnection.setReadTimeout(120e3); % 2-minute window to read from connection.
+    %% Set timeout.
+
+    % 60-second window to establish connection.
+    urlConnection.setConnectTimeout(60e3); 
+    
+    % 10-minute window to read from connection.
+    % Window needs to be very long in case of a reset on server side.
+    urlConnection.setReadTimeout(600e3); 
 end
 

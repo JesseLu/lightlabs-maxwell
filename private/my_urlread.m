@@ -2,7 +2,7 @@
 % Used to GET or POST to a url.
 % Reads out the response in a stream-it-on-one-line fashion.
 function [status, response] = ...
-    maxwell_urlread(urlChar, method, params, verbosity, varargin)
+    my_urlread(urlChar, method, params, verbosity, varargin)
 
     % This function requires Java.
     if ~usejava('jvm')
